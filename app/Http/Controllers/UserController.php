@@ -7,6 +7,7 @@ use App\Models\LevelModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -72,6 +73,47 @@ class UserController extends Controller
 
         return view('user.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
+
+    // Menampilkan halaman form tambah user ajax
+    public function create_ajax()
+    {
+        $level = LevelModel::select('level_id', 'level_nama')->get();
+        return view('user.create_ajax')->with('level', $level);
+    }
+
+     // Menyimpan data user baru via ajax
+     public function store_ajax(Request $request)
+     {
+         // Cek apakah request berupa AJAX
+         if ($request->ajax() || $request->wantsJson()) {
+             $rules = [
+                 'level_id' => 'required|integer',
+                 'username' => 'required|string|min:3|unique:m_user,username',
+                 'nama' => 'required|string|max:100',
+                 'password' => 'required|min:6'
+             ];
+             // use Illuminate\Support\Facades\Validator
+            $validator = Validator::make($request->all(), $rules);
+ 
+             if ($validator->fails()) {
+                 return response()->json([
+                     'status'  => false, // response status, false: error/gagal, true: berhasil
+                     'message' => 'Validasi Gagal',
+                     'msgField' => $validator->errors(), // pesan error validasi
+                 ]);
+             }
+ 
+             UserModel::create($request->all());
+ 
+             return response()->json([
+                 'status'  => true,
+                 'message' => 'Data user berhasil disimpan'
+             ]);
+         }
+ 
+         redirect('/');
+     }
+
     public function store(Request $request)
     {
         $request->validate([
