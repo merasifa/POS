@@ -167,6 +167,37 @@ class UserController extends Controller
 
         return view('user.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'user' => $user, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
+
+     //konfirm ajax
+     public function confirm_ajax(string $id){
+        $user = UserModel::find($id);
+
+        return view('user.confirm_ajax', ['user' =>$user]);
+    }
+
+    //delete ajax
+    public function delete_ajax(Request $request, $id)
+    {
+        //cek apakah req dari ajax
+        if($request->ajax() || $request->wantsJson()){
+            $user = UserModel::find($id);
+            if($user){
+                $user->delete();
+                return response()->json([
+                    'status'=> true,
+                    'message'=> 'Data berhasil dihapus'
+                ]);
+            }else{
+                return response()->json([
+                    'status'=> false,
+                    'message'=> 'Data tidak ditemuka'
+                ]);
+            }
+        } 
+        return redirect('/');   
+    }
+
+    // Menyimpan perubahan data user
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -176,22 +207,16 @@ class UserController extends Controller
             'level_id' => 'required|integer',
         ]);
 
-        $user = UserModel::find($id);
-
-        $userData = [
+        UserModel::find($id)->update([
             'username' => $request->username,
             'nama' => $request->nama,
+            'password' => $request->password ? bcrypt($request->password) : UserModel::find($id)->password,
             'level_id' => $request->level_id,
-        ];
+        ]);
 
-        if ($request->password) {
-            $userData['password'] = bcrypt($request->password);
-        }
-
-        $user->update($userData);
-
-        return redirect('/user')->with('success', 'Data user berhasil diperbarui');
+        return redirect('/user')->with('success', 'Data user berhasil diubah');
     }
+
     public function destroy($id)
     {
         $check = UserModel::find($id);
