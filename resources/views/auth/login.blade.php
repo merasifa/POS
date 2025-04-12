@@ -49,6 +49,11 @@
                             </div>
                             <small id="error-password" class="error-text text-danger"></small>
                         </div>
+                        <div class="mb-3 text-right">
+                            <small>
+                                <a href="{{url('register')}}" class="text-primary">Daftar</a>
+                            </small>
+                        </div>
                         <div class="row">
                             <div class="col-8">
                                 <div class="icheck-primary">
