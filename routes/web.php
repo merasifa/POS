@@ -7,6 +7,7 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,8 +28,8 @@ Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
 Route::get('register', [AuthController::class, 'register'])->name('register');
 Route::post('register', [AuthController::class, 'postregister']);
-Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
-
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::post('/profile/update-photo', [ProfileController::class, 'updatePhoto']);
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
 

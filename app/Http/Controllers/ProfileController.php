@@ -1,38 +1,64 @@
 <?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-
-class ProfileController extends Controller
-{
-    public function updateAvatar(Request $request)
+ 
+ namespace App\Http\Controllers;
+ 
+ use Illuminate\Http\Request;
+ use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Facades\Storage;
+ 
+ class ProfileController extends Controller
+ {
+     public function index()
      {
-         $request->validate([
-             'photo' => 'required|image|max:2048',
-         ]);
+         $breadcrumb = (object) [
+             'title' => 'Profil User',
+             'list'  => ['Home', 'Profil']
+         ];
  
-         $user = auth()->user();
+         $page = (object) [
+             'title' => 'Profil user yang sedang login'
+         ];
  
-         // Hapus foto lama jika ada
-         if ($user->foto_profil && Storage::disk('public')->exists('profile/' . $user->foto_profil)) {
-             Storage::disk('public')->delete('profile/' . $user->foto_profil);
-         }
+         $activeMenu = 'profile'; // untuk menandai menu aktif di sidebar
  
-         // Simpan foto baru
-         $filename = uniqid() . '.' . $request->file('photo')->extension();
-         $request->file('photo')->storeAs('profile', $filename, 'public');
+         $user = Auth::user();
  
-         // Simpan nama file ke kolom foto_profil
-         $user->foto_profil = $filename;
- 
-         
- 
-         return response()->json([
-             'success' => true,
-             'message' => 'Foto berhasil diperbarui.',
-             'photo_url' => asset('storage/profile/' . $filename),
+         return view('profile.index', [
+             'breadcrumb' => $breadcrumb,
+             'page'       => $page,
+             'user'       => $user,
+             'activeMenu' => $activeMenu
          ]);
      }
+ 
+     public function updatePhoto(Request $request)
+{
+    $request->validate([
+        'photo' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+    ]);
+
+    $user = auth()->user();
+    /** @var \App\Models\UserModel $user */
+
+    // Hapus foto lama kalau ada
+    if ($user->foto && Storage::exists('public/profile/' . $user->foto)) {
+        Storage::delete('public/profile/' . $user->foto);
+    }
+
+    // Simpan foto baru
+    $file = $request->file('photo');
+    $filename = time() . '.' . $file->getClientOriginalExtension();
+    $file->storeAs('public/profile', $filename);
+
+    // Simpan nama file ke user
+    $user->foto = $filename;
+    $user->save();
+
+    // Balikin responsenya — ini yang kamu tanyakan
+    return response()->json([
+        'message' => 'Foto profil berhasil diubah!',
+        'photo_url' => asset('storage/profile/' . $filename) . '?' . time()
+    ]);
 }
+
+ }

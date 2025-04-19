@@ -135,14 +135,46 @@
               <i class="fas fa-th-large"></i>
           </a>
       </li>
-      <li class="nav-item">
-          <form id="logout-form" action="{{ url('logout') }}" method="GET" style="display: none;">
-              @csrf
-          </form>
-          <a class="nav-link" href="#"
-              onclick="event.preventDefault(); document.getElementById('logout-form').submit();" role="button">
-              <i class="fas fa-sign-out-alt"></i> Logout
-          </a>
-      </li>
+      
+      <!-- Profil -->
+      <li class="nav-item dropdown me-6"> {{-- Item dropdown dalam navbar dengan margin kanan --}}
+        <a class="nav-link" data-toggle="dropdown" href="#" id="avatarDropdown">
+            {{-- Trigger dropdown --}}
+            @if (auth()->user()->foto)
+                {{-- Jika user punya foto profil --}}
+                <img src="{{ asset('storage/profile/' . auth()->user()->foto) }}?{{ time() }}"
+                    class="img-circle elevation-2" alt="User Image" width="27" height="27">
+                {{-- Foto profil user kecil --}}
+            @else
+                {{-- Jika user tidak punya foto --}}
+                <img src="{{ asset('storage/profile/image.png') }}" class="img-circle elevation-2"
+                    alt="User Image" width="30" height="30"> {{-- Foto default --}}
+            @endif
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right"> {{-- Kontainer isi dropdown --}}
+            <div class="dropdown-item text-center"> {{-- Item pertama: tampilkan info user --}}
+                <div class="image"> {{-- Pembungkus gambar besar --}}
+                    @if (auth()->user()->foto)
+                        {{-- Jika user punya foto --}}
+                        <img src="{{ asset('storage/profile/' . auth()->user()->foto) }}?{{ time() }}"
+                            class="img-circle elevation-2" alt="User Image" width="100"
+                            height="100"> {{-- Foto besar user --}}
+                    @else
+                        {{-- Jika tidak punya foto --}}
+                        <img src="{{ asset('storage/profile/image.png') }}"
+                            class="img-circle elevation-2" alt="User Image" width="100"
+                            height="100"> {{-- Foto default besar --}}
+                    @endif
+                </div>
+                <p class="mt-2">{{ auth()->user()->nama }}</p> {{-- Tampilkan nama user --}}
+            </div>
+            <div class="dropdown-divider"></div> {{-- Garis pemisah --}}
+            <a href="#" class="dropdown-item" data-toggle="modal"
+                data-target="#changeAvatarModal"> {{-- Buka modal ganti foto --}}
+                <i class="fas fa-camera mr-2"></i> Ganti Foto Profil
+            </a>
+        </div>
+    </li>
+
   </ul>
 </nav>
