@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('barang_nama', 100);
             $table->integer('harga_beli');
             $table->integer('harga_jual');
+            $table->string('image')->default('default.png');
             $table->timestamps();
         
             $table->foreign('kategori_id')->references('kategori_id')->on('m_kategori');

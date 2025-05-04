@@ -15,9 +15,25 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        $barang = BarangModel::create($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+
+            // Melakukan Hash Name pada file
+            $filename = $file->hashName();
+
+            $file->storeAs('images', $filename, 'public');
+
+            $data['image'] = 'images/' . $filename;
+        }
+
+        $barang = BarangModel::create($data);
+
         return response()->json($barang, 201);
     }
+
+
 
     public function show(BarangModel $barang)
     {

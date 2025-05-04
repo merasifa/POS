@@ -19,6 +19,7 @@
          'barang_nama',
          'harga_beli',
          'harga_jual',
+         'image',
      ];
  
      public function kategori():BelongsTo
