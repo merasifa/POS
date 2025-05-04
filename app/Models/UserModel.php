@@ -32,6 +32,7 @@ class UserModel extends Authenticatable implements JWTSubject
         'nama',
         'password',
         'profile_picture',
+        'image',
     ];
 
     //Relasi dengan tabel level
