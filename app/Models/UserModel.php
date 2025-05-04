@@ -28,6 +28,17 @@ class UserModel extends Authenticatable
 
     protected $casts = ['password' => 'hashed'];
 
+    // JWT
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     public function level():BelongsTo
     {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
