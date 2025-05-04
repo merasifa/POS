@@ -11,7 +11,7 @@ class LevelModel extends Model
 
     protected $table = 'm_level'; // Nama tabel di database
     protected $primaryKey = 'level_id'; // Ubah primary key ke 'level_id'
-    public $timestamps = false; // Jika tabel tidak memiliki created_at dan updated_at
+    public $timestamps = true; // Jika tabel tidak memiliki created_at dan updated_at
 
     protected $fillable = [
         'level_kode',
